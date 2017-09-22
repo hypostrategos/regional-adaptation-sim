@@ -3,11 +3,9 @@ import java.util.*;
 
 public class SimMap {
     private static SimMap instance;
-    public static final int numOfRegions = 100;
-    public static final int maxSurfaceArea = 10;
-    public static final int maxSize = 10;
-    public static final int minSize = 1;
-    public static final int mapWidth = 5;
+    public static final int numOfRegions = 20;
+    public static final int maxSurfaceArea = 5;
+    public static final int mapWidth = 10;
     private List<Region> regionList = new ArrayList<>(numOfRegions);
     
     private SimMap () {
@@ -20,7 +18,7 @@ public class SimMap {
         int region;
         int size;
         for(region = 0; region < numOfRegions; region++) {
-            size = rand.nextInt(maxSize-minSize)+minSize; 
+            size = 0;//rand.nextInt(maxSize-minSize)+minSize; 
             regionList.add(new Region(region, size));
             adjacencyList.add(new HashSet<Integer>());
         }
@@ -37,15 +35,21 @@ public class SimMap {
         Random rand = new Random();
         int surfaceArea = rand.nextInt(maxSurfaceArea)+1;
         int val=0;
-        for(int i=0;i<surfaceArea;i++) {
-            val = rand.nextInt(10);
-            val = (regionId-mapWidth)+();///
-            if (val!=regionId&&val>=0&&val<numOfRegions) {
+        int x = regionId%mapWidth;
+        int y = regionId/mapWidth;
+        for(int i=0;i<surfaceArea;i++) { //random number of adjacencies generated based on maxSurfaceArea
+            val = (x-1<0||x+1>=mapWidth)?rand.nextInt(2):rand.nextInt(3); 
+            int xd = val + ((x-1<0)?x:x-1);
+            val = (y-1<0||y+1>=numOfRegions/mapWidth)?rand.nextInt(2):rand.nextInt(3);
+            int yd = val + ((y-1<0)?y:y-1);
+            val = xd+yd*mapWidth; //converts x&y displacement into target adjacency region's id
+            
+            if (val!=regionId) { //update current region HashSet and that of the region it is adjacent to
                 adjacencyList.get(regionId).add(val);
                 adjacencyList.get(val).add(regionId);
             };
         }
-        if (adjacencyList.get(regionId)==null) 
+        if (adjacencyList.get(regionId).isEmpty()) //makes sure each region's adjacency list has at least one entity
             setAdjacency(regionId, adjacencyList);
     }
 
