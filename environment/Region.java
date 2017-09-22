@@ -1,3 +1,4 @@
+package environment;
 import java.util.*;
 
 class Adjacency <T, U, V> {
@@ -16,7 +17,7 @@ class Adjacency <T, U, V> {
     public V getDistance() { return distance; }
 }
 
-public class Region extends Map {
+public class Region {
     private enum Terrain { 
         FLAT, HILLS, MOUNTAINS 
     }
@@ -28,6 +29,13 @@ public class Region extends Map {
 
     private int regionId;
     private int regionSize;
-    private ArrayList<Adjacency<Integer, Integer, Integer>> regionAdjacency;
+    private List<Adjacency<Integer, Integer, Integer>> regionAdjacency = new ArrayList<>();
     private Terrain regionTerrain;
+
+    public Region (int regionId) {
+       this.regionId = regionId;
+    }
+    public void setAdjacency(int region, int direction, int distance) {
+        regionAdjacency.add(new Adjacency<>(region, direction, distance)); 
+    }
 }
