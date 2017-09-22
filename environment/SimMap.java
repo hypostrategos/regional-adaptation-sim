@@ -6,6 +6,7 @@ public class SimMap {
     public static final int numOfRegions = 20;
     public static final int maxSurfaceArea = 5;
     public static final int mapWidth = 10;
+
     private List<Region> regionList = new ArrayList<>(numOfRegions);
     
     private SimMap () {
@@ -14,20 +15,21 @@ public class SimMap {
 
     private void mapInit () {
         List<HashSet<Integer>> adjacencyList = new ArrayList<>(numOfRegions);
-        Random rand = new Random();
         int region;
-        int size;
         for(region = 0; region < numOfRegions; region++) {
-            size = 0;//rand.nextInt(maxSize-minSize)+minSize; 
-            regionList.add(new Region(region, size));
+            regionList.add(new Region(region));
             adjacencyList.add(new HashSet<Integer>());
         }
         for (region = 0; region < numOfRegions; region++) {
             setAdjacency(region, adjacencyList);
         }
-        for(region = 0; region < numOfRegions; region++) {
+        for (region = 0; region < numOfRegions; region++) {
             regionList.get(region).setAdjacency(adjacencyList.get(region));
-            System.out.println("Region: "+region+" Adj: "+regionList.get(region).getAdjacencyReg()); 
+            regionList.get(region).setSize(adjacencyList.get(region));
+        }
+        for(region = 0; region < numOfRegions; region++) {
+            regionList.get(region).setDistance(regionList);
+            System.out.println(regionList.get(region)); 
         }
     }
 
