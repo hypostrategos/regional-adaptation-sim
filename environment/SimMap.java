@@ -5,7 +5,7 @@ public class SimMap {
     private static SimMap instance;
     public static final int numOfRegions = 20;
     public static final int maxSurfaceArea = 5;
-    public static final int mapWidth = 5;
+    public static final int mapWidth = 10;
 
     private List<Region> regionList = new ArrayList<>(numOfRegions);
     
@@ -26,6 +26,7 @@ public class SimMap {
         for (region = 0; region < numOfRegions; region++) {
             regionList.get(region).setAdjacency(adjacencyList.get(region));
             regionList.get(region).setSize(adjacencyList.get(region));
+            regionList.get(region).setElevation();
         }
         for(region = 0; region < numOfRegions; region++) {
             regionList.get(region).setDistance(regionList, mapWidth);

@@ -2,9 +2,6 @@ package environment;
 import java.util.*;
 
 public class Region {
-    private enum Terrain { 
-        FLAT, HILLS, MOUNTAINS 
-    }
     private enum Directions {
         NW, N, NE, W, E, SW, S, SE
     }
@@ -24,7 +21,8 @@ public class Region {
     private List<Integer> adjacencyReg;
     private List<Directions> adjacencyDir;
     private List<Integer> adjacencyDist;
-    private Terrain regionTerrain;
+    public Double regionElevationInit;
+    private Double regionElevation; 
 
     public Region (int regionId) {
         this.regionId = regionId;
@@ -35,10 +33,16 @@ public class Region {
     public void setDistance (List<Region> regionList, int mapWidth) {
         adjacencyDist = new ArrayList<>();
         adjacencyDir = new ArrayList<>();
+        Integer adjacencies = adjacencyReg.size();
         for (Integer targetRegion : adjacencyReg) {
-            adjacencyDist.add( regionSize + regionList.get(targetRegion).getRegionSize() );
+            Region targRegionObj = regionList.get(targetRegion);
+
+            adjacencyDist.add( regionSize + targRegionObj.getRegionSize() );
+
             setDirection(targetRegion, mapWidth);
+            setElevation(targRegionObj);
         }
+        regionElevation = regionElevation/(adjacencies+1);
     }
     private void setDirection(Integer targetRegion, int mapWidth) {
         int diff = regionId - targetRegion;
@@ -59,6 +63,17 @@ public class Region {
         else if (diff<-mapWidth)
             adjacencyDir.add(Directions.SE);
     }
+    public void setElevation() {
+        Random rand = new Random();
+        regionElevationInit = rand.nextDouble();
+        regionElevation = regionElevationInit;
+    }
+    public void setElevation(Region targetRegion) {
+        regionElevation += targetRegion.regionElevationInit;
+    }
+    public Double getTerrain() {
+        return regionElevation;
+    }
     public void setSize(HashSet<Integer> adj) {
         Random rand = new Random();
         this.regionSize = adj.size() * numRegionsMod * (rand.nextInt(maxRegionSize-minRegionSize)+minRegionSize);
@@ -74,6 +89,7 @@ public class Region {
     }
     @Override
     public String toString() {
-        return "Region: "+regionId+" || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+"\n";
+        return "Region: "+regionId+" || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+" "+//regionElevation+" "+regionElevationInit+
+        "\n";
     }
 }
