@@ -11,10 +11,10 @@ public class Region {
     public static final int minRegionDistance = 1;
     public static final int numRegionsMod = 1;
 
-    private Fauna regionFauna;
-    private Flora regionFlora;
-    private Weather regionWeather;
-    private Water regionWater;
+    public Fauna regionFauna;
+    public Flora regionFlora;
+    public Weather regionWeather;
+    public Water regionWater;
 
     private int regionId;
     private int regionSize;
@@ -63,15 +63,23 @@ public class Region {
         else if (diff<-mapWidth)
             adjacencyDir.add(Directions.SE);
     }
-    public void setElevation() {
+    public void setInitial() {
         Random rand = new Random();
+        setElevation(rand);
+
+        regionWeather = new Weather();
+        regionWeather.setTemperature(rand);
+        regionWeather.setPrecipitation(rand);
+        regionWeather.setWind(rand);
+    }
+    public void setElevation(Random rand) {
         regionElevationInit = rand.nextDouble();
         regionElevation = regionElevationInit;
     }
     public void setElevation(Region targetRegion) {
         regionElevation += targetRegion.regionElevationInit;
     }
-    public Double getTerrain() {
+    public Double getElevation() {
         return regionElevation;
     }
     public void setSize(HashSet<Integer> adj) {
@@ -89,7 +97,8 @@ public class Region {
     }
     @Override
     public String toString() {
-        return "Region: "+regionId+" || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+" "+//regionElevation+" "+regionElevationInit+
+        return "Region: "+regionId+//" || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+" "+regionElevation+" "+regionElevationInit+
+        " "+regionWeather.getTemperature()+" "+regionWeather.getPrecipitation()+" "+regionWeather.getWind()+
         "\n";
     }
 }

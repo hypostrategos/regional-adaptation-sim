@@ -6,11 +6,21 @@ public class SimMap {
     public static final int numOfRegions = 20;
     public static final int maxSurfaceArea = 5;
     public static final int mapWidth = 10;
+    public static int counter;
 
     private List<Region> regionList = new ArrayList<>(numOfRegions);
     
     private SimMap () {
         mapInit();
+    }
+
+    public void mapUpdate() {
+        Random rand = new Random();
+        regionList.forEach(region->region.regionWeather.updateWeather(rand,counter+=0.1));
+    }
+
+    public void mapDisplay() {
+        System.out.println(regionList); 
     }
 
     private void mapInit () {
@@ -26,12 +36,11 @@ public class SimMap {
         for (region = 0; region < numOfRegions; region++) {
             regionList.get(region).setAdjacency(adjacencyList.get(region));
             regionList.get(region).setSize(adjacencyList.get(region));
-            regionList.get(region).setElevation();
+            regionList.get(region).setInitial();
         }
         for(region = 0; region < numOfRegions; region++) {
             regionList.get(region).setDistance(regionList, mapWidth);
         }
-        System.out.println(regionList); 
     }
 
     private void setAdjacency(int regionId, List<HashSet<Integer>> adjacencyList) {
