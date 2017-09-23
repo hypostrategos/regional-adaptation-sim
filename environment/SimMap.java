@@ -3,10 +3,11 @@ import java.util.*;
 
 public class SimMap {
     private static SimMap instance;
-    public static final int numOfRegions = 20;
+    public static final int numOfRegions = 100;
     public static final int maxSurfaceArea = 5;
     public static final int mapWidth = 10;
-    public static int counter;
+    public static double counter;
+    public static Random rand = new Random();
 
     private List<Region> regionList = new ArrayList<>(numOfRegions);
     
@@ -15,8 +16,8 @@ public class SimMap {
     }
 
     public void mapUpdate() {
-        Random rand = new Random();
-        regionList.forEach(region->region.regionWeather.updateWeather(rand,counter+=0.1));
+        regionList.forEach(region->region.regionWeather.updateWeather());
+        regionList.forEach(region->region.updateFauna(regionList));
     }
 
     public void mapDisplay() {
@@ -36,7 +37,7 @@ public class SimMap {
         for (region = 0; region < numOfRegions; region++) {
             regionList.get(region).setAdjacency(adjacencyList.get(region));
             regionList.get(region).setSize(adjacencyList.get(region));
-            regionList.get(region).setInitial();
+            regionList.get(region).setInitial(regionList.get(region));
         }
         for(region = 0; region < numOfRegions; region++) {
             regionList.get(region).setDistance(regionList, mapWidth);
@@ -44,7 +45,6 @@ public class SimMap {
     }
 
     private void setAdjacency(int regionId, List<HashSet<Integer>> adjacencyList) {
-        Random rand = new Random();
         int surfaceArea = rand.nextInt(maxSurfaceArea)+1;
         int val=0;
         int x = regionId%mapWidth;
