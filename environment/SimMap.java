@@ -3,7 +3,7 @@ import java.util.*;
 
 public class SimMap {
     private static SimMap instance;
-    public static final int numOfRegions = 100;
+    public static final int numOfRegions = 20;
     public static final int maxSurfaceArea = 5;
     public static final int mapWidth = 10;
     public static double counter;

@@ -11,6 +11,7 @@ public class Fauna {
 	private Double rateVegConsumption;
 	private int strength;
 
+	public Fauna() {}
 	public Fauna(Fauna fauna) {
 		this.name = fauna.name;
 		this.population = fauna.population/10;

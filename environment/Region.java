@@ -12,7 +12,7 @@ public class Region {
     public static final int numRegionsMod = 1;
 
     public Map<String, Fauna> regionFauna;
-    public Set<Flora> regionFlora;
+    public Map<String, Flora> regionFlora;
     public Weather regionWeather;
     public Water regionWater;
 
@@ -71,6 +71,7 @@ public class Region {
         regionWeather.setPrecipitation();
         regionWeather.setWind();
         setFauna(region);
+        setFlora(region);
     }
     public void setFauna(Region region) {
         regionFauna = new HashMap<>();
@@ -100,6 +101,14 @@ public class Region {
             .regionFauna.put(fauna.getName(), new Fauna(fauna)); fauna.changePopulation(-300);
         } } );
     }
+    public void setFlora(Region region) {
+        regionFlora = new HashMap<>();
+        String name;
+        for (int i = 0; i<SimMap.rand.nextInt(4); i++) {
+            name = Namer.genName();
+            regionFlora.put(name, new Flora(region, name));
+        }
+    }
     public void setElevation() {
         regionElevationInit = SimMap.rand.nextDouble();
         regionElevation = regionElevationInit;
@@ -127,9 +136,11 @@ public class Region {
     }
     @Override
     public String toString() {
-        return "Region: "+regionId+//" || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+" "+regionElevation+" "+regionElevationInit+
+        return "Region: "+regionId+
+        // " || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+
+        " "+regionElevationInit+" "+regionElevation+
         //" "+regionWeather.getTemperature()+" "+regionWeather.getPrecipitation()+" "+regionWeather.getWind()+
-        " "+regionFauna.values()+
+        // " "+regionFauna.values()+
         "\n";
     }
 }
