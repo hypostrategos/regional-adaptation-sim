@@ -84,22 +84,32 @@ public class Region {
     public void updateFauna(List<Region> regionList) {
         List<Fauna> badFauna = new ArrayList<>();
         List<Fauna> tempFauna = new ArrayList<>();
-        regionFauna.forEach( (name, fauna) -> { tempFauna.add(fauna); fauna.updateFauna(); 
+        regionFauna.forEach( (name, fauna) -> { tempFauna.add(fauna); 
             if(fauna.getPopulation()<=0) badFauna.add(fauna); } );
 
         tempFauna.forEach( fauna -> { 
-            for (Fauna enemyFauna : tempFauna) {
-                if (fauna!=enemyFauna) {
-                    enemyFauna.battle(fauna);
+            if (fauna.getCarn()>0.5) {
+                for (Fauna enemyFauna : tempFauna) {
+                    if (fauna!=enemyFauna) {
+                        fauna.battle(enemyFauna);
+                    }
                 }
-        } } );
+            } else if(regionFlora.size()>0) { 
+                for (Flora flora : regionFlora.values()) {
+                    fauna.grazeOn(flora);
+                }
+            }
+            fauna.faunaUpdate();
+        } );
+        if (!badFauna.isEmpty()) badFauna.forEach ( fauna -> { 
+            regionFauna.remove(fauna.getName()); tempFauna.remove(fauna); } );
 
-        if (!badFauna.isEmpty()) badFauna.forEach ( fauna -> regionFauna.remove(fauna.getName()));
-
-        tempFauna.forEach( fauna -> { if (fauna.getPopulation()>2000&&SimMap.rand.nextInt(10)>8) {
-            regionList.get(Namer.getRandomItem(adjacencyReg))
-            .regionFauna.put(fauna.getName(), new Fauna(fauna)); fauna.changePopulation(-300);
-        } } );
+        for (Fauna fauna : tempFauna) {
+            if(fauna.getPopulation()>2000&&SimMap.rand.nextInt(10)>8) {
+                Region region = regionList.get(Namer.getRandomItem(adjacencyReg));
+                region.regionFauna.put(fauna.getName(), new Fauna(fauna, region));
+            }
+        }
     }
     public void setFlora(Region region) {
         regionFlora = new HashMap<>();
@@ -152,8 +162,8 @@ public class Region {
         // " || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+
         // " "+regionElevationInit+" "+regionElevation+
         // " "+regionWeather.getTemperature()+" "+regionWeather.getPrecipitation()+" "+regionWeather.getWind()+
-        " "+regionFlora.values()+    
-        // " "+regionFauna.values()+
+        // " "+regionFlora.values()+    
+        " "+regionFauna.values()+
         "\n";
     }
 }

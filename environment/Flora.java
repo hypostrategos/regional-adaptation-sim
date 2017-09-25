@@ -70,20 +70,9 @@ public class Flora {
 		if (cover<total)
 			cover+=10*growthRate*(SimMap.rand.nextInt(10)+1)*(total/(maxCover+cover));
 	}
-	// public void updateFauna() {
-	// 	this.cover+=SimMap.rand.nextInt(300)-100;
-	// }
-	// public int getPopulation(){
-	// 	return cover;
-	// }
-	// public void changePopulation(Integer cover) {
-	// 	this.cover+=cover;
-	// }
-
-	// public void battle(Fauna attackingFauna) {
-	// 	// int i = Math.min( ( ( 50*strength-50*attackingFauna.getStrength() ) ),0); System.out.println(i);
-	// 	changePopulation(Math.min( ( ( 50*strength-50*attackingFauna.getStrength() ) ),0) ); 
-	// }
+	public void changeCover(int cover) {
+		cover+=cover;
+	}
     @Override
     public String toString() {
     	return name+
@@ -93,5 +82,4 @@ public class Flora {
     	" "+cover
     	;
     }
-
 }
