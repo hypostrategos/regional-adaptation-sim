@@ -7,6 +7,8 @@ public class SimMap {
     public static final int maxSurfaceArea = 5;
     public static final int mapWidth = 10;
     public static double counter;
+    public static int totalFlora;
+    public static int totalFauna;
     public static Random rand = new Random();
 
     private List<Region> regionList = new ArrayList<>(numOfRegions);
@@ -14,15 +16,34 @@ public class SimMap {
     private SimMap () {
         mapInit();
     }
-
+    public void mapDisplay() {
+        System.out.println(regionList); 
+    }
     public void mapUpdate() {
         regionList.forEach(region->region.regionWeather.updateWeather());
         regionList.forEach(region->region.updateFauna(regionList));
         regionList.forEach(region->region.updateFlora(regionList));
+        // if ((int)(counter*10%64)==0) {
+        //     mapBioCount();
+        //     if(totalFlora<=10)
+        //         mapIncreaseSpecies(1);
+        //     if(totalFauna<=10)
+        //         mapIncreaseSpecies(2);
+        // }
     }
-
-    public void mapDisplay() {
-        System.out.println(regionList); 
+    public void mapIncreaseSpecies(int which) {
+        if (which==1) regionList.forEach(region->region.setFlora());
+        if (which==2) regionList.forEach(region->region.setFauna());
+    }
+    public void mapBioCount() {
+        Set<String> countFlora = new HashSet<>();
+        Set<String> countFauna = new HashSet<>();
+        regionList.forEach( region-> {
+            region.regionFlora.forEach( (name, fauna) -> countFlora.add(name) );
+            region.regionFauna.forEach( (name, flora) -> countFauna.add(name) );
+        } );
+        totalFlora = countFlora.size();
+        totalFauna = countFauna.size();
     }
 
     private void mapInit () {
@@ -38,7 +59,7 @@ public class SimMap {
         for (region = 0; region < numOfRegions; region++) {
             regionList.get(region).setAdjacency(adjacencyList.get(region));
             regionList.get(region).setSize(adjacencyList.get(region));
-            regionList.get(region).setInitial(regionList.get(region));
+            regionList.get(region).setInitial();
         }
         for(region = 0; region < numOfRegions; region++) {
             regionList.get(region).setDistance(regionList, mapWidth);

@@ -21,7 +21,6 @@ public class Flora {
 		setRest();
 	}
 	public Flora(Region myRegion, String name) {
-		int size = myRegion.getSize();
 		this.name = name;
 		this.myRegion = myRegion;
 		affinities = new int[4];
@@ -38,6 +37,9 @@ public class Flora {
 	}
 	public int getCover() {
 		return cover;
+	}
+	public double getSize() {
+		return size;
 	}
 	public void setRest() {
 		double mod = SimMap.rand.nextDouble();
@@ -68,10 +70,10 @@ public class Flora {
 	public void growFlora(int crowding) {
 		int total = Math.max((6-crowding),1)*maxCover;
 		if (cover<total)
-			cover+=10*growthRate*(SimMap.rand.nextInt(10)+1)*(total/(maxCover+cover));
+			cover+=growthRate*100*(total/(maxCover+cover));
 	}
 	public void changeCover(int cover) {
-		cover+=cover;
+		this.cover+=cover;
 	}
     @Override
     public String toString() {

@@ -63,22 +63,21 @@ public class Region {
         else if (diff<-mapWidth)
             adjacencyDir.add(Directions.SE);
     }
-    public void setInitial(Region region) {
+    public void setInitial() {
         setElevation();
-
         regionWeather = new Weather();
         regionWeather.setTemperature();
         regionWeather.setPrecipitation();
         regionWeather.setWind();
-        setFauna(region);
-        setFlora(region);
+        setFauna();
+        setFlora();
     }
-    public void setFauna(Region region) {
+    public void setFauna() {
         regionFauna = new HashMap<>();
         String name;
         for (int i = 0; i<SimMap.rand.nextInt(4); i++) {
             name = Namer.genName();
-            regionFauna.put(name, new Fauna(region, name));
+            regionFauna.put(name, new Fauna(this, name));
         }
     }
     public void updateFauna(List<Region> regionList) {
@@ -88,7 +87,7 @@ public class Region {
             if(fauna.getPopulation()<=0) badFauna.add(fauna); } );
 
         tempFauna.forEach( fauna -> { 
-            if (fauna.getCarn()>0.5) {
+            if (tempFauna.size()>1&&fauna.getCarn()>0.5) {
                 for (Fauna enemyFauna : tempFauna) {
                     if (fauna!=enemyFauna) {
                         fauna.battle(enemyFauna);
@@ -101,6 +100,7 @@ public class Region {
             }
             fauna.faunaUpdate();
         } );
+
         if (!badFauna.isEmpty()) badFauna.forEach ( fauna -> { 
             regionFauna.remove(fauna.getName()); tempFauna.remove(fauna); } );
 
@@ -111,18 +111,22 @@ public class Region {
             }
         }
     }
-    public void setFlora(Region region) {
+    public void setFlora() {
         regionFlora = new HashMap<>();
         String name;
         for (int i = 0; i<SimMap.rand.nextInt(4); i++) {
             name = Namer.genName();
-            regionFlora.put(name, new Flora(region, name));
+            regionFlora.put(name, new Flora(this, name));
         }
     }
     public void updateFlora(List<Region> regionList) {
         int crowding = regionFlora.size();
+        List<Flora> badFlora = new ArrayList<>();
         List<Flora> tempFlora = new ArrayList<>();
-        regionFlora.forEach( (name, flora) -> { tempFlora.add(flora); flora.growFlora(crowding); } );
+        regionFlora.forEach( (name, flora) -> { tempFlora.add(flora); flora.growFlora(crowding);
+        if(flora.getCover()<=0) badFlora.add(flora); } );
+        if (!badFlora.isEmpty()) badFlora.forEach ( flora -> { 
+            regionFlora.remove(flora.getName()); tempFlora.remove(flora); } );
 
         for (Flora flora : tempFlora) {
             if(flora.getCover()>2000&&SimMap.rand.nextInt(10)>8) {
@@ -158,7 +162,7 @@ public class Region {
     }
     @Override
     public String toString() {
-        return "Region: "+regionId+
+        return "Region: "+regionId+//" "+this+
         // " || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+
         // " "+regionElevationInit+" "+regionElevation+
         // " "+regionWeather.getTemperature()+" "+regionWeather.getPrecipitation()+" "+regionWeather.getWind()+

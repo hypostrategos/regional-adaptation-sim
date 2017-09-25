@@ -10,8 +10,8 @@ public class Fauna {
 	private Double carnCoeff;
 	// private Double rateVegConsumption;
 	private int strength;
-	private int meat=1000;
-	private int veg=1000;
+	private double meat=1000;
+	private double veg=1000;
 	private Region myRegion;
 
 	public Fauna() {}
@@ -30,11 +30,11 @@ public class Fauna {
 		this.name = name;
 		this.myRegion = myRegion;
 		this.population = 10*size*SimMap.rand.nextInt(10);
-		this.ferocity = SimMap.rand.nextInt(5);
-		this.size = SimMap.rand.nextInt(5);
+		this.carnCoeff = SimMap.rand.nextDouble();
+		this.ferocity = (int)(SimMap.rand.nextInt(5)*carnCoeff);
+		this.size = SimMap.rand.nextInt(5)+1;
 		this.speed = SimMap.rand.nextInt(5);
 		this.strength = this.ferocity+this.size+this.speed;
-		this.carnCoeff = SimMap.rand.nextDouble();
 	}
 	public int getStrength() {
 		return strength;
@@ -51,21 +51,25 @@ public class Fauna {
 	public void changePopulation(Integer population) {
 		this.population+=population;
 	}
-	public int getVeg() {
+	public double getVeg() {
 		return veg;
 	}
+	public int getSize() {
+		return size;
+	}
 	public void faunaUpdate() {
-		int consumption;
-		if (meat>0) {
-			consumption = (int)(population*carnCoeff*SimMap.rand.nextDouble()+100);
-			meat-=consumption;
-		} else if (veg>0) {
-			consumption = (int)(population*(1-carnCoeff)*SimMap.rand.nextDouble()+100);
-			veg-=consumption;
+		double consumption;
+		if (meat*2>population) {
+			consumption = (population*carnCoeff*SimMap.rand.nextDouble()+100)/2;
+			meat-=consumption/(6-size);
+		} else if (veg*2>population) {
+			consumption = (population*(1-carnCoeff)*SimMap.rand.nextDouble()+100)/2;
+			veg-=consumption/(6-size);
 		} else {
-			consumption = -(int)(population*SimMap.rand.nextDouble()+100);
+			consumption = -(population/10*SimMap.rand.nextDouble()+100);
+			veg-=consumption/(6-size); meat-=consumption/(6-size);
 		}
-		population+=consumption;
+		population+=(int)consumption;
 	}
 	public void battle(Fauna enemyFauna) {
 		// int i = Math.min( ( ( 50*strength-50*attackingFauna.getStrength() ) ),0); System.out.println(i);
@@ -74,19 +78,19 @@ public class Fauna {
 		if (result>0) {
 			result = (int)((result/10+1) * population * SimMap.rand.nextDouble());
 			enemyFauna.changePopulation(-result);
-			meat+=result;
+			meat+=result*(enemyFauna.getSize()/5.0);
 		}
 	}
 	public void grazeOn(Flora flora) {
-		int consumption;
-		consumption = (int)((1-carnCoeff)*population*SimMap.rand.nextDouble());
-		if (flora.getCover()>consumption) {
-			flora.changeCover(-consumption);
-			veg+=consumption;
-		}
+		double consumption;
+		consumption = (1-carnCoeff)*population*SimMap.rand.nextDouble()*(size/(10*flora.getSize()));
+		flora.changeCover((int)-consumption);
+		veg+=consumption;
 	}
     @Override
     public String toString() {
-    	return name+" "+population+" "+(carnCoeff>0.5?"Carn":"Herb");
+    	return name+" "+population+
+    	" "+(carnCoeff>0.5?"C":"H")+" "+(int)meat+" "+(int)veg+
+    	"||";
     }
 }
