@@ -84,7 +84,8 @@ public class Region {
     public void updateFauna(List<Region> regionList) {
         List<Fauna> badFauna = new ArrayList<>();
         List<Fauna> tempFauna = new ArrayList<>();
-        regionFauna.forEach( (name, fauna) -> { tempFauna.add(fauna);} );
+        regionFauna.forEach( (name, fauna) -> { tempFauna.add(fauna); fauna.updateFauna(); 
+            if(fauna.getPopulation()<=0) badFauna.add(fauna); } );
 
         tempFauna.forEach( fauna -> { 
             for (Fauna enemyFauna : tempFauna) {
@@ -93,7 +94,6 @@ public class Region {
                 }
         } } );
 
-        tempFauna.forEach( fauna -> { fauna.updateFauna(); if(fauna.getPopulation()<=0) badFauna.add(fauna); });
         if (!badFauna.isEmpty()) badFauna.forEach ( fauna -> regionFauna.remove(fauna.getName()));
 
         tempFauna.forEach( fauna -> { if (fauna.getPopulation()>2000&&SimMap.rand.nextInt(10)>8) {
@@ -107,6 +107,18 @@ public class Region {
         for (int i = 0; i<SimMap.rand.nextInt(4); i++) {
             name = Namer.genName();
             regionFlora.put(name, new Flora(region, name));
+        }
+    }
+    public void updateFlora(List<Region> regionList) {
+        int crowding = regionFlora.size();
+        List<Flora> tempFlora = new ArrayList<>();
+        regionFlora.forEach( (name, flora) -> { tempFlora.add(flora); flora.growFlora(crowding); } );
+
+        for (Flora flora : tempFlora) {
+            if(flora.getCover()>2000&&SimMap.rand.nextInt(10)>8) {
+                Region region = regionList.get(Namer.getRandomItem(adjacencyReg));
+                region.regionFlora.put(flora.getName(), new Flora(flora, region));
+            }
         }
     }
     public void setElevation() {
@@ -138,8 +150,9 @@ public class Region {
     public String toString() {
         return "Region: "+regionId+
         // " || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+
-        " "+regionElevationInit+" "+regionElevation+
-        //" "+regionWeather.getTemperature()+" "+regionWeather.getPrecipitation()+" "+regionWeather.getWind()+
+        // " "+regionElevationInit+" "+regionElevation+
+        // " "+regionWeather.getTemperature()+" "+regionWeather.getPrecipitation()+" "+regionWeather.getWind()+
+        " "+regionFlora.values()+    
         // " "+regionFauna.values()+
         "\n";
     }

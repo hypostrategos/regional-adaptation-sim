@@ -10,6 +10,7 @@ public class Fauna {
 	private Double rateMeatConsumption;
 	private Double rateVegConsumption;
 	private int strength;
+	private Region myRegion;
 
 	public Fauna() {}
 	public Fauna(Fauna fauna) {
@@ -23,6 +24,7 @@ public class Fauna {
 	public Fauna(Region myRegion, String name) {
 		int size = myRegion.getSize();
 		this.name = name;
+		this.myRegion = myRegion;
 		this.population = 10*size*SimMap.rand.nextInt(10);
 		this.ferocity = SimMap.rand.nextInt(5);
 		this.size = SimMap.rand.nextInt(5);

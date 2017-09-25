@@ -18,6 +18,7 @@ public class SimMap {
     public void mapUpdate() {
         regionList.forEach(region->region.regionWeather.updateWeather());
         regionList.forEach(region->region.updateFauna(regionList));
+        regionList.forEach(region->region.updateFlora(regionList));
     }
 
     public void mapDisplay() {

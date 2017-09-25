@@ -10,28 +10,40 @@ public class Weather {
 
 
 	public void setTemperature() {
-		temperatureInit = 10*SimMap.rand.nextDouble();
+		temperatureInit = SimMap.rand.nextDouble();
 	}
+	public void setPrecipitation() {
+		precipitationInit = SimMap.rand.nextDouble();
+	}
+	public void setWind() {
+		windInit = SimMap.rand.nextDouble();
+	}
+
 	public double getTemperature() {
 		return temperature;
 	}
-	public void setPrecipitation() {
-		precipitationInit = 10*SimMap.rand.nextDouble();
-	}
 	public double getPrecipitation() {
 		return precipitation;
-	}
-	public void setWind() {
-		windInit = 10*SimMap.rand.nextDouble();
 	}
 	public double getWind() {
 		return wind;
 	}
 
+	public double getTemperatureInit() {
+		return temperatureInit;
+	}
+	public double getPrecipitationInit() {
+		return precipitationInit;
+	}
+	public double getWindInit() {
+		return windInit;
+	}
+
+
 	public void updateWeather() {
-		temperature = temperatureInit+10*Math.sin(SimMap.counter)*SimMap.rand.nextDouble();
-		precipitation = precipitationInit+10*Math.sin(SimMap.counter)*SimMap.rand.nextDouble();
-		wind = windInit+10*Math.sin(SimMap.counter)*SimMap.rand.nextDouble();
+		temperature = temperatureInit+Math.sin(SimMap.counter)*SimMap.rand.nextDouble();
+		precipitation = precipitationInit+Math.sin(SimMap.counter)*SimMap.rand.nextDouble();
+		wind = windInit+Math.sin(SimMap.counter)*SimMap.rand.nextDouble();
 
 	}
 }
