@@ -71,28 +71,22 @@ public class Region {
         regionWeather.setTemperature();
         regionWeather.setPrecipitation();
         regionWeather.setWind();
-        Namer.timer(()->setBio());
-        // setBio();
-                Namer.timer(()->setBio());
-        setFauna();
-        setFlora();
+        setBio(0);
+        setBio(1);
     }
-    public void setBio() {
-        List<Fauna> regionBio = new ArrayList<>();
-        regionBio.addAll(
-            Stream.generate(()->new Fauna(this, Namer.genName()))
-            .limit(SimMap.rand.nextInt(4)) 
-            .collect(Collectors.toList())
-        );
-        System.out.println(regionBio);
-    }
-    public void setFauna() {
+    public void setBio(int flag) {
         String name;
         for (int i = 0; i<SimMap.rand.nextInt(4); i++) {
             name = Namer.genName();
-            regionFauna.put(name, new Fauna(this, name));
+            switch(flag) {
+                case 0 : regionFlora.put(name, new Flora(this, name));
+                break;
+                case 1 : regionFauna.put(name, new Fauna(this, name));
+                break;
+            }
         }
     }
+
     public void updateFauna(List<Region> regionList) {
         List<Fauna> badFauna = new ArrayList<>();
         List<Fauna> tempFauna = new ArrayList<>();
@@ -122,13 +116,6 @@ public class Region {
                 Region region = regionList.get(Namer.getRandomItem(adjacencyReg));
                 region.regionFauna.put(fauna.getName(), new Fauna(fauna, region));
             }
-        }
-    }
-    public void setFlora() {
-        String name;
-        for (int i = 0; i<SimMap.rand.nextInt(4); i++) {
-            name = Namer.genName();
-            regionFlora.put(name, new Flora(this, name));
         }
     }
     public void updateFlora(List<Region> regionList) {
