@@ -14,11 +14,12 @@ public class Flora {
 	public Flora(Flora flora, Region myRegion) {
 		this.myRegion = myRegion;
 		this.name = flora.name;
-		this.cover = 300;
+		this.cover = flora.getCover()/10;
+		flora.changeCover(-this.cover);
 		this.affinities=flora.affinities.clone();
 		setAffinity();
-		setMaxCover();
 		setRest();
+		setMaxCover();
 	}
 	public Flora(Region myRegion, String name) {
 		this.name = name;
@@ -28,9 +29,9 @@ public class Flora {
 			affinities[i] = SimMap.rand.nextInt(3)-1;
 		}			
 		setAffinity();
+		setRest();
 		setMaxCover();
 		setCover();
-		setRest();
 	}
 	public String getName() {
 		return name;
@@ -43,7 +44,7 @@ public class Flora {
 	}
 	public void setRest() {
 		double mod = SimMap.rand.nextDouble();
-		size = 1.0-mod;
+		size = 1.0-mod+0.1;
 		growthRate = regionAffinity+mod;
 	}
 	public void setRest(double size) {
@@ -51,10 +52,10 @@ public class Flora {
 		growthRate = regionAffinity+(1.0-size);
 	}
 	private void setMaxCover() {
-		maxCover = (int)(regionAffinity*1000*myRegion.getSize()+(SimMap.rand.nextInt(10)+1)*2000);
+		maxCover = (int)(regionAffinity*200*myRegion.getSize()/size)+2000;
 	}
 	private void setCover() {
-		cover = 100*SimMap.rand.nextInt(10)+100;
+		cover = 100*SimMap.rand.nextInt(10)+1000;
 	}
 	private void setAffinity () {
 		this.regionAffinity = subAffinity(myRegion.getElevation(), affinities[0])+
@@ -70,7 +71,9 @@ public class Flora {
 	public void growFlora(int crowding) {
 		int total = Math.max((6-crowding),1)*maxCover;
 		if (cover<total)
-			cover+=growthRate*100*(total/(maxCover+cover));
+			// cover+=growthRate*100*(total/(maxCover+cover));
+			cover+=(cover/crowding)*(growthRate/10.0)+100;
+		// System.out.println((cover/crowding)*(growthRate/10.0));
 	}
 	public void changeCover(int cover) {
 		this.cover+=cover;
@@ -79,8 +82,9 @@ public class Flora {
     public String toString() {
     	return name+
     	// " "+affinities[0]+affinities[1]+affinities[2]+affinities[3]+
-    	// " "+regionAffinity+" "+size+" "+growthRate+
-    	// " "+maxCover+
+    	// " "+regionAffinity+" "+growthRate+
+    	// " "+size+
+    	" "+maxCover+
     	" "+cover
     	;
     }

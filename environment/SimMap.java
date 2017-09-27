@@ -20,9 +20,9 @@ public class SimMap {
         System.out.println(regionList); 
     }
     public void mapUpdate() {
-        regionList.forEach(region->region.regionWeather.updateWeather());
-        regionList.forEach(region->region.updateFauna(regionList));
+        // regionList.forEach(region->region.regionWeather.updateWeather());
         regionList.forEach(region->region.updateFlora(regionList));
+        regionList.forEach(region->region.updateFauna(regionList));
         // if ((int)(counter*10%64)==0) {
         //     mapBioCount();
         //     if(totalFlora<=10)

@@ -76,7 +76,7 @@ public class Region {
     }
     public void setBio(int flag) {
         String name;
-        for (int i = 0; i<SimMap.rand.nextInt(4); i++) {
+        for (int i = 0; i<SimMap.rand.nextInt(4)+1; i++) {
             name = Namer.genName();
             switch(flag) {
                 case 0 : regionFlora.put(name, new Flora(this, name));
@@ -94,16 +94,18 @@ public class Region {
             if(fauna.getPopulation()<=0) badFauna.add(fauna); } );
 
         tempFauna.forEach( fauna -> { 
-            if (tempFauna.size()>1&&fauna.getCarn()>0.5) {
+            if (tempFauna.size()>1&&fauna.getCarn()>0.5&&fauna.getMeat()<fauna.getPopulation()*2) {
                 for (Fauna enemyFauna : tempFauna) {
                     if (fauna!=enemyFauna) {
                         fauna.battle(enemyFauna);
                     }
                 }
-            } else if(regionFlora.size()>0) { 
+            } else if(regionFlora.size()>0&&fauna.getVeg()<fauna.getPopulation()*2) { 
                 for (Flora flora : regionFlora.values()) {
                     fauna.grazeOn(flora);
                 }
+            } else {
+                fauna.expansionCapacityMod(0.1);
             }
             fauna.faunaUpdate();
         } );
@@ -114,7 +116,7 @@ public class Region {
         for (Fauna fauna : tempFauna) {
             if(fauna.getPopulation()>2000&&SimMap.rand.nextInt(10)>8) {
                 Region region = regionList.get(Namer.getRandomItem(adjacencyReg));
-                region.regionFauna.put(fauna.getName(), new Fauna(fauna, region));
+                region.regionFauna.putIfAbsent(fauna.getName(), new Fauna(fauna, region));
             }
         }
     }
@@ -130,7 +132,7 @@ public class Region {
         for (Flora flora : tempFlora) {
             if(flora.getCover()>2000&&SimMap.rand.nextInt(10)>8) {
                 Region region = regionList.get(Namer.getRandomItem(adjacencyReg));
-                region.regionFlora.put(flora.getName(), new Flora(flora, region));
+                region.regionFlora.putIfAbsent(flora.getName(), new Flora(flora, region));
             }
         }
     }
@@ -161,7 +163,7 @@ public class Region {
     }
     @Override
     public String toString() {
-        return "Region: "+regionId+//" "+this+
+        return "Region: "+regionId+
         // " || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+
         // " "+regionElevationInit+" "+regionElevation+
         // " "+regionWeather.getTemperature()+" "+regionWeather.getPrecipitation()+" "+regionWeather.getWind()+
