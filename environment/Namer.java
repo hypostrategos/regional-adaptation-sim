@@ -14,7 +14,12 @@ public class Namer {
 		}
 		return sb.toString();
 	}
-
+    public static void timer(Runnable func) {
+        long startTime = System.currentTimeMillis();
+        func.run();
+        long endTime = System.currentTimeMillis();
+        System.out.println("That took " + (endTime - startTime) + " milliseconds");
+    }
 	static <T> T getRandomItem(List<T> list) {
     	return list.get(SimMap.rand.nextInt(list.size()));
 	}

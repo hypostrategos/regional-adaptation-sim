@@ -1,6 +1,7 @@
 package environment;
 import java.util.*;
 import java.util.stream.*;
+import java.util.function.*;
 
 public class Region {
     private enum Directions {
@@ -70,15 +71,20 @@ public class Region {
         regionWeather.setTemperature();
         regionWeather.setPrecipitation();
         regionWeather.setWind();
-        setBio();
+        Namer.timer(()->setBio());
+        // setBio();
+                Namer.timer(()->setBio());
         setFauna();
         setFlora();
     }
     public void setBio() {
-        Set<Fauna> regionBio = new HashSet<>();
-        regionBio = Stream.generate(()->new Fauna(this, Namer.genName()))
-        .limit(SimMap.rand.nextInt(4))
-        .collect(Collectors.toSet());
+        List<Fauna> regionBio = new ArrayList<>();
+        regionBio.addAll(
+            Stream.generate(()->new Fauna(this, Namer.genName()))
+            .limit(SimMap.rand.nextInt(4)) 
+            .collect(Collectors.toList())
+        );
+        System.out.println(regionBio);
     }
     public void setFauna() {
         String name;
