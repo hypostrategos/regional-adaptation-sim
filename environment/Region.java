@@ -1,5 +1,6 @@
 package environment;
 import java.util.*;
+import java.util.stream.*;
 
 public class Region {
     private enum Directions {
@@ -11,8 +12,8 @@ public class Region {
     public static final int minRegionDistance = 1;
     public static final int numRegionsMod = 1;
 
-    public Map<String, Fauna> regionFauna;
-    public Map<String, Flora> regionFlora;
+    public Map<String, Fauna> regionFauna=new HashMap<>();
+    public Map<String, Flora> regionFlora=new HashMap<>();
     public Weather regionWeather;
     public Water regionWater;
 
@@ -69,11 +70,17 @@ public class Region {
         regionWeather.setTemperature();
         regionWeather.setPrecipitation();
         regionWeather.setWind();
+        setBio();
         setFauna();
         setFlora();
     }
+    public void setBio() {
+        Set<Fauna> regionBio = new HashSet<>();
+        regionBio = Stream.generate(()->new Fauna(this, Namer.genName()))
+        .limit(SimMap.rand.nextInt(4))
+        .collect(Collectors.toSet());
+    }
     public void setFauna() {
-        regionFauna = new HashMap<>();
         String name;
         for (int i = 0; i<SimMap.rand.nextInt(4); i++) {
             name = Namer.genName();
@@ -112,7 +119,6 @@ public class Region {
         }
     }
     public void setFlora() {
-        regionFlora = new HashMap<>();
         String name;
         for (int i = 0; i<SimMap.rand.nextInt(4); i++) {
             name = Namer.genName();

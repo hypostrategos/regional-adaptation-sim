@@ -33,7 +33,7 @@ public class SimMap {
     }
     public void mapIncreaseSpecies(int which) {
         if (which==1) regionList.forEach(region->region.setFlora());
-        if (which==2) regionList.forEach(region->region.setFauna());
+        if (which==2) regionList.forEach(region->region.setBio());
     }
     public void mapBioCount() {
         Set<String> countFlora = new HashSet<>();
