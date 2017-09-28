@@ -11,7 +11,7 @@ public class SimMap {
     public static int totalFauna;
     public static Random rand = new Random();
 
-    private List<Region> regionList = new ArrayList<>(numOfRegions);
+    public static List<Region> regionList = new ArrayList<>(numOfRegions);
     
     private SimMap () {
         mapInit();
@@ -21,8 +21,8 @@ public class SimMap {
     }
     public void mapUpdate() {
         // regionList.forEach(region->region.regionWeather.updateWeather());
-        regionList.forEach(region->region.updateFlora(regionList));
-        regionList.forEach(region->region.updateFauna(regionList));
+        regionList.forEach(region->region.updateFlora());
+        regionList.forEach(region->region.updateFauna());
         // if ((int)(counter*10%64)==0) {
         //     mapBioCount();
         //     if(totalFlora<=10)
@@ -62,7 +62,7 @@ public class SimMap {
             regionList.get(region).setInitial();
         }
         for(region = 0; region < numOfRegions; region++) {
-            regionList.get(region).setDistance(regionList, mapWidth);
+            regionList.get(region).setDistance(mapWidth);
         }
     }
 

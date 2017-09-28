@@ -32,12 +32,12 @@ public class Region {
     public void setAdjacency (HashSet<Integer> adj) {
         adjacencyReg = new ArrayList<>(adj);
     }
-    public void setDistance (List<Region> regionList, int mapWidth) {
+    public void setDistance (int mapWidth) {
         adjacencyDist = new ArrayList<>();
         adjacencyDir = new ArrayList<>();
         Integer adjacencies = adjacencyReg.size();
         for (Integer targetRegion : adjacencyReg) {
-            Region targRegionObj = regionList.get(targetRegion);
+            Region targRegionObj = SimMap.regionList.get(targetRegion);
 
             adjacencyDist.add( regionSize + targRegionObj.getRegionSize() );
 
@@ -81,46 +81,64 @@ public class Region {
             switch(flag) {
                 case 0 : regionFlora.put(name, new Flora(this, name));
                 break;
-                case 1 : regionFauna.put(name, new Fauna(this, name));
+                case 1 : 
+                if (i%3==1) 
+                    regionFauna.put(name, new Carnivore(this, name));
+                else
+                    regionFauna.put(name, new Herbivore(this, name));
                 break;
             }
         }
     }
 
-    public void updateFauna(List<Region> regionList) {
+    public void updateFauna() {
         List<Fauna> badFauna = new ArrayList<>();
         List<Fauna> tempFauna = new ArrayList<>();
-        regionFauna.forEach( (name, fauna) -> { tempFauna.add(fauna); 
-            if(fauna.getPopulation()<=0) badFauna.add(fauna); } );
+        // regionFauna.forEach( (name, fauna) -> { tempFauna.add(fauna); 
+        //     if(fauna.getPopulation()<=0) badFauna.add(fauna); } );
 
-        tempFauna.forEach( fauna -> { 
-            if (tempFauna.size()>1&&fauna.getCarn()>0.5&&fauna.getMeat()<fauna.getPopulation()*2) {
-                for (Fauna enemyFauna : tempFauna) {
-                    if (fauna!=enemyFauna) {
-                        fauna.battle(enemyFauna);
-                    }
-                }
-            } else if(regionFlora.size()>0&&fauna.getVeg()<fauna.getPopulation()*2) { 
-                for (Flora flora : regionFlora.values()) {
-                    fauna.grazeOn(flora);
-                }
-            } else {
-                fauna.expansionCapacityMod(0.1);
-            }
-            fauna.faunaUpdate();
+        regionFauna.values().stream()
+        .filter(fauna->fauna instanceof Herbivore)
+        .forEach(herb -> {
+            regionFlora.values().stream()
+            .forEach(flora->herb.grazeOn(flora));
+            herb.faunaUpdate();
         } );
+        regionFauna.values().stream()
+        .filter(fauna->fauna instanceof Carnivore)
+        .forEach(carn -> {
+            regionFauna.values().stream()
+            .filter(fauna->carn!=fauna)
+            .forEach(fauna->carn.battle(fauna));
+            carn.faunaUpdate();
+        } );
+        // for (Herbivore herbivore : tempFauna) {
+        //     System.out.println(herbivore)
+        // }
+        // tempFauna.forEach( fauna -> { 
+        //     if (tempFauna.size()>1&&fauna.getCarn()>0.5&&fauna.getMeat()<fauna.getPopulation()*2) {
+        //         for (Fauna enemyFauna : tempFauna) {
+        //             if (fauna!=enemyFauna) {
+        //                 fauna.battle(enemyFauna);
+        //             }
+        //         }
+        //     } else if(regionFlora.size()>0&&fauna.getVeg()<fauna.getPopulation()*2) { 
+        //         for (Flora flora : regionFlora.values()) {
+        //             fauna.grazeOn(flora);
+        //         }
+        //     } else {
+        //         fauna.expansionCapacityMod(0.1);
+        //     }
+        //     fauna.faunaUpdate();
+        // } );
 
-        if (!badFauna.isEmpty()) badFauna.forEach ( fauna -> { 
-            regionFauna.remove(fauna.getName()); tempFauna.remove(fauna); } );
+        if (!badFauna.isEmpty()) 
+            badFauna.forEach ( fauna -> regionFauna.remove(fauna.getName()) );
 
-        for (Fauna fauna : tempFauna) {
-            if(fauna.getPopulation()>2000&&SimMap.rand.nextInt(10)>8) {
-                Region region = regionList.get(Namer.getRandomItem(adjacencyReg));
-                region.regionFauna.putIfAbsent(fauna.getName(), new Fauna(fauna, region));
-            }
-        }
+        regionFauna.values()
+        .forEach( fauna -> fauna.multiply(adjacencyReg) );
     }
-    public void updateFlora(List<Region> regionList) {
+    public void updateFlora() {
         int crowding = regionFlora.size();
         List<Flora> badFlora = new ArrayList<>();
         List<Flora> tempFlora = new ArrayList<>();
@@ -131,7 +149,7 @@ public class Region {
 
         for (Flora flora : tempFlora) {
             if(flora.getCover()>2000&&SimMap.rand.nextInt(10)>8) {
-                Region region = regionList.get(Namer.getRandomItem(adjacencyReg));
+                Region region = SimMap.regionList.get(Namer.getRandomItem(adjacencyReg));
                 region.regionFlora.putIfAbsent(flora.getName(), new Flora(flora, region));
             }
         }
