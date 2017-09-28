@@ -11,15 +11,14 @@ public class Herbivore extends Fauna {
 	public Herbivore(Region myRegion, String name) {
 		super(myRegion, name);
 	}
+    @Override
 	public void grazeOn(Flora flora) {
 		double consumption;
 		consumption = population*SimMap.rand.nextDouble()*(size/(10*flora.getSize()));
-		// System.out.println(consumption);
 		flora.changeCover((int)-consumption);
 		food+=consumption*flora.getSize();
-		if(population>flora.getCover()) expansionCapacity=0.5;
-		else expansionCapacity=1;
 	}
+    @Override
 	public void multiply (List<Integer> adjacencyReg) {
         if(population>2000&&SimMap.rand.nextInt(10)>8) {
             Region region = SimMap.regionList.get(Namer.getRandomItem(adjacencyReg));
@@ -28,9 +27,6 @@ public class Herbivore extends Fauna {
 	}
     @Override
     public String toString() {
-    	return name+" "+population+
-    	" "+"H"+" "+(int)food+" "+
-    	// " "+ferocity+" "+size+" "+strength+
-    	"||";
+    	return super.toString() +" HERB "+"||";
     }
 }

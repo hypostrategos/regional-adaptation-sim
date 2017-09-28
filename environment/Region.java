@@ -92,45 +92,24 @@ public class Region {
     }
 
     public void updateFauna() {
+        int crowding = regionFauna.size();
         List<Fauna> badFauna = new ArrayList<>();
-        List<Fauna> tempFauna = new ArrayList<>();
-        // regionFauna.forEach( (name, fauna) -> { tempFauna.add(fauna); 
-        //     if(fauna.getPopulation()<=0) badFauna.add(fauna); } );
 
         regionFauna.values().stream()
-        .filter(fauna->fauna instanceof Herbivore)
+        .filter(fauna->fauna instanceof Herbivore && fauna.getFood()<2*fauna.getPopulation())
         .forEach(herb -> {
             regionFlora.values().stream()
             .forEach(flora->herb.grazeOn(flora));
-            herb.faunaUpdate();
         } );
         regionFauna.values().stream()
-        .filter(fauna->fauna instanceof Carnivore)
+        .filter(fauna->fauna instanceof Carnivore && fauna.getFood()<2*fauna.getPopulation())
         .forEach(carn -> {
             regionFauna.values().stream()
             .filter(fauna->carn!=fauna)
             .forEach(fauna->carn.battle(fauna));
-            carn.faunaUpdate();
         } );
-        // for (Herbivore herbivore : tempFauna) {
-        //     System.out.println(herbivore)
-        // }
-        // tempFauna.forEach( fauna -> { 
-        //     if (tempFauna.size()>1&&fauna.getCarn()>0.5&&fauna.getMeat()<fauna.getPopulation()*2) {
-        //         for (Fauna enemyFauna : tempFauna) {
-        //             if (fauna!=enemyFauna) {
-        //                 fauna.battle(enemyFauna);
-        //             }
-        //         }
-        //     } else if(regionFlora.size()>0&&fauna.getVeg()<fauna.getPopulation()*2) { 
-        //         for (Flora flora : regionFlora.values()) {
-        //             fauna.grazeOn(flora);
-        //         }
-        //     } else {
-        //         fauna.expansionCapacityMod(0.1);
-        //     }
-        //     fauna.faunaUpdate();
-        // } );
+        regionFauna.values().stream()
+        .forEach(fauna->fauna.faunaUpdate(crowding));
 
         if (!badFauna.isEmpty()) 
             badFauna.forEach ( fauna -> regionFauna.remove(fauna.getName()) );
@@ -178,6 +157,9 @@ public class Region {
     }
     public int getRegionSize() {
         return regionSize;
+    }
+    public int getRegionId() {
+        return regionId;
     }
     @Override
     public String toString() {
