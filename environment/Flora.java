@@ -8,6 +8,8 @@ public class Flora {
 	private double size;
 	private double growthRate;
 	private Region myRegion;
+	private int foliage;
+	private int food=1000;
 
 	public Flora() {}
 
@@ -15,7 +17,7 @@ public class Flora {
 		this.myRegion = myRegion;
 		this.name = flora.name;
 		this.cover = flora.getCover()/10;
-		flora.changeCover(-this.cover);
+		// flora.changeCover(-this.cover);
 		this.affinities=flora.affinities.clone();
 		setAffinity();
 		setRest();
@@ -39,6 +41,9 @@ public class Flora {
 	public int getCover() {
 		return cover;
 	}
+	public int getFoliage() {
+		return foliage;
+	}
 	public double getSize() {
 		return size;
 	}
@@ -52,10 +57,11 @@ public class Flora {
 		growthRate = regionAffinity+(1.0-size);
 	}
 	private void setMaxCover() {
-		maxCover = (int)(regionAffinity*200*myRegion.getSize()/size)+2000;
+		maxCover = (int)(regionAffinity*100*myRegion.getSize()/size)+1000;
 	}
 	private void setCover() {
-		cover = 100*SimMap.rand.nextInt(10)+1000;
+		cover = 10*SimMap.rand.nextInt(10)+100;
+		foliage = cover;
 	}
 	private void setAffinity () {
 		this.regionAffinity = subAffinity(myRegion.getElevation(), affinities[0])+
@@ -68,15 +74,44 @@ public class Flora {
 		else if(affinity==1) return regionVal;
 		else return -4*(regionVal-0.5)*(regionVal-0.5)+1;
 	}
-	public void growFlora(int crowding) {
-		int total = Math.max((6-crowding),1)*maxCover;
-		if (cover<total)
-			// cover+=growthRate*100*(total/(maxCover+cover));
-			cover+=(cover/crowding)*(growthRate/10.0)+100;
-		// System.out.println((cover/crowding)*(growthRate/10.0));
+	public void floraUpdate(int crowding) {
+		growFoliage();
+		spreadFlora(crowding);
 	}
-	public void changeCover(int cover) {
-		this.cover+=cover;
+	private void growFoliage() {
+		int change;
+		double growth = (subAffinity(myRegion.regionWeather.getTemperature(), affinities[1])+
+		subAffinity(myRegion.regionWeather.getPrecipitation(), affinities[2])+
+		subAffinity(myRegion.regionWeather.getWindInit(), affinities[3]));
+		// System.out.println(growth);
+		if (foliage<0) 
+			foliage=0;
+		if (food>10*cover) 
+			food=10*cover;
+		food+=(foliage*growth)/10;
+
+		if (food>0) {
+			change = (foliage<cover*4) ? cover/5 : 0;
+			foliage+=change; food-=change;
+		} else {
+			change = foliage/10+10;
+			foliage-=change; food+=change;
+		}
+	}
+	private void spreadFlora(int crowding) {
+		int total = Math.max((6-crowding),1)*maxCover;
+		double change;
+		if (cover<total&&food>0) {
+			change=(cover/crowding)*(growthRate/10.0);
+			food-=change; cover+=change;
+		} else if(food<=0&&foliage<=0) {
+			change = -food*2+100;
+			cover-=change;
+			foliage+=change; food+=change;
+		}
+	}
+	public void changeFoliage(int foliage) {
+		this.foliage-=foliage;
 	}
     @Override
     public String toString() {
@@ -84,8 +119,8 @@ public class Flora {
     	// " "+affinities[0]+affinities[1]+affinities[2]+affinities[3]+
     	// " "+regionAffinity+" "+growthRate+
     	// " "+size+
-    	" "+maxCover+
-    	" "+cover
+    	// " "+maxCover+
+    	" "+cover+" "+food+" "+foliage
     	;
     }
 }

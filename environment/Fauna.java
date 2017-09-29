@@ -77,7 +77,7 @@ public class Fauna {
 	@Override
     public String toString() {
     	return name+" "+population+" "+(int)food
-    	+" "+regionSizeLimit
+    	// +" "+regionSizeLimit
     	// +" "+ferocity+" "+size+" "+strength
     	;
     }

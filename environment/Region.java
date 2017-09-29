@@ -99,6 +99,7 @@ public class Region {
         .filter(fauna->fauna instanceof Herbivore && fauna.getFood()<2*fauna.getPopulation())
         .forEach(herb -> {
             regionFlora.values().stream()
+            .filter(flora->flora.getFoliage()>0)
             .forEach(flora->herb.grazeOn(flora));
         } );
         regionFauna.values().stream()
@@ -121,17 +122,18 @@ public class Region {
         int crowding = regionFlora.size();
         List<Flora> badFlora = new ArrayList<>();
         List<Flora> tempFlora = new ArrayList<>();
-        regionFlora.forEach( (name, flora) -> { tempFlora.add(flora); flora.growFlora(crowding);
+        regionFlora.forEach( (name, flora) -> { tempFlora.add(flora); flora.floraUpdate(crowding);
         if(flora.getCover()<=0) badFlora.add(flora); } );
+
         if (!badFlora.isEmpty()) badFlora.forEach ( flora -> { 
             regionFlora.remove(flora.getName()); tempFlora.remove(flora); } );
 
-        for (Flora flora : tempFlora) {
-            if(flora.getCover()>2000&&SimMap.rand.nextInt(10)>8) {
-                Region region = SimMap.regionList.get(Namer.getRandomItem(adjacencyReg));
-                region.regionFlora.putIfAbsent(flora.getName(), new Flora(flora, region));
-            }
-        }
+        // for (Flora flora : tempFlora) {
+        //     if(flora.getCover()>2000&&SimMap.rand.nextInt(10)>8) {
+        //         Region region = SimMap.regionList.get(Namer.getRandomItem(adjacencyReg));
+        //         region.regionFlora.putIfAbsent(flora.getName(), new Flora(flora, region));
+        //     }
+        // }
     }
     public void setElevation() {
         regionElevationInit = SimMap.rand.nextDouble();

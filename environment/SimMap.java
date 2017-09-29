@@ -20,7 +20,7 @@ public class SimMap {
         System.out.println(regionList); 
     }
     public void mapUpdate() {
-        // regionList.forEach(region->region.regionWeather.updateWeather());
+        regionList.forEach(region->region.regionWeather.updateWeather());
         regionList.forEach(region->region.updateFlora());
         regionList.forEach(region->region.updateFauna());
         // if ((int)(counter*10%64)==0) {
