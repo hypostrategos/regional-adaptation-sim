@@ -41,9 +41,9 @@ public class Weather {
 
 
 	public void updateWeather() {
-		temperature = temperatureInit+Math.sin(SimMap.counter)*SimMap.rand.nextDouble();
-		precipitation = precipitationInit+Math.sin(SimMap.counter)*SimMap.rand.nextDouble();
-		wind = windInit+Math.sin(SimMap.counter)*SimMap.rand.nextDouble();
+		temperature = temperatureInit+Math.sin(SimMap.counter);
+		// precipitation = precipitationInit+Math.sin(SimMap.counter);
+		// wind = windInit+Math.sin(SimMap.counter);
 
 	}
 }

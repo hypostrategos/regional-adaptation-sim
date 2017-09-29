@@ -20,16 +20,21 @@ public class SimMap {
         System.out.println(regionList); 
     }
     public void mapUpdate() {
+        counter+=0.1; 
         regionList.forEach(region->region.regionWeather.updateWeather());
         regionList.forEach(region->region.updateFlora());
         regionList.forEach(region->region.updateFauna());
-        // if ((int)(counter*10%64)==0) {
-        //     mapBioCount();
-        //     if(totalFlora<=10)
-        //         mapIncreaseSpecies(1);
-        //     if(totalFauna<=10)
-        //         mapIncreaseSpecies(2);
-        // }
+        if ((int)(counter*10%128)==0) {
+            mapBioCount();
+            if(totalFlora<=10)
+                mapIncreaseSpecies(1);
+            if(totalFauna<=10)
+                mapIncreaseSpecies(2);
+        }
+    }
+    public void mapUpdate(int times) {
+        for (int i=1; i<=times; i++) 
+            mapUpdate();
     }
     public void mapIncreaseSpecies(int which) {
         if (which==1) regionList.forEach(region->region.setBio(0));

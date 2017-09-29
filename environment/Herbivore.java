@@ -15,8 +15,9 @@ public class Herbivore extends Fauna {
 	public void grazeOn(Flora flora) {
 		double consumption;
 		consumption = population*SimMap.rand.nextDouble()*(size/(10*flora.getSize()));
-		flora.changeFoliage((int)-consumption);
-		food+=consumption*flora.getSize();
+		flora.changeFoliage(-(int)consumption);
+		// System.out.println(-(int)consumption);
+		food+=consumption*(5*flora.getSize());
 	}
     @Override
 	public void multiply (List<Integer> adjacencyReg) {

@@ -8,7 +8,7 @@ public class Fauna {
 	protected int size;
 	protected int strength;
 	protected double food=1000;
-	protected Region myRegion;
+	public Region myRegion;
 	protected double growthRate;
 	protected int regionSizeLimit;
 
@@ -34,6 +34,10 @@ public class Fauna {
 		growthRate = 0.02 + 0.20*SimMap.rand.nextDouble()*(1.5-size/5.0);
 		setRegionSizeLimit();
 	}
+	protected Region setRegion (Region region) {
+		myRegion = region;
+		return region;
+	}
 	protected void setRegionSizeLimit() {
 		regionSizeLimit = myRegion.getSize()*(6-size)*100+1000;
 	}
@@ -47,7 +51,7 @@ public class Fauna {
 		return population;
 	}
 	public void changePopulation(Integer population) {
-		population+=population;
+		this.population+=population;
 	}
 	public double getFood() {
 		return food;
@@ -58,15 +62,15 @@ public class Fauna {
 	public void faunaUpdate(int crowding) {
 		double consumption;
 		if (food>population*2) {
-			consumption = (population*SimMap.rand.nextDouble())/2.0;
-			food-=consumption/(6-size);
+			consumption = (population*SimMap.rand.nextDouble())/2.0+10;
+			food-=consumption/(6-size); population++;
 			consumption = population<regionSizeLimit ? consumption : consumption/(2.0+crowding) ;
 		} else if (food>0) {
-			consumption = (population*SimMap.rand.nextDouble())/4.0;
-			food-=consumption/(6-size); consumption/=-2.0;
+			consumption = -(population*SimMap.rand.nextDouble())/4.0;
+			food+=consumption/(6-size);
 		} else {
-			consumption = -(population*SimMap.rand.nextDouble())/6.0;
-			food=0;
+			consumption = -(population*SimMap.rand.nextDouble())/2.0-100;
+			food=0; population--;
 		}
 		population+=(int)( consumption*growthRate );
 	}

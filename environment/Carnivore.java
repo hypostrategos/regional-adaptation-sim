@@ -21,8 +21,9 @@ public class Carnivore extends Fauna {
 		if (result>0) {
 			// System.out.print(myRegion.getRegionId()+" "+name+" v "+enemyFauna.getName()+" "+result+"||");
 			result = result * population * (6-enemyFauna.getSize()) * SimMap.rand.nextDouble()/10;
-			// System.out.println(" "+result);
+			// System.out.print(" "+result+" "+enemyFauna.getPopulation()+" ");
 			enemyFauna.changePopulation(-(int)result);
+			// System.out.println(enemyFauna.getPopulation());
 			food+=result*(enemyFauna.getSize()/2);
 		}
 	}

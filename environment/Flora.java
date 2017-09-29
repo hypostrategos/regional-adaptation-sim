@@ -1,4 +1,6 @@
 package environment;
+
+import java.util.*;
 public class Flora {
 	private int[] affinities; //elevation moisture temperature wind 
 	private double regionAffinity;
@@ -9,7 +11,7 @@ public class Flora {
 	private double growthRate;
 	private Region myRegion;
 	private int foliage;
-	private int food=1000;
+	private int food=2000;
 
 	public Flora() {}
 
@@ -17,7 +19,7 @@ public class Flora {
 		this.myRegion = myRegion;
 		this.name = flora.name;
 		this.cover = flora.getCover()/10;
-		// flora.changeCover(-this.cover);
+		flora.changeCover(-this.cover);
 		this.affinities=flora.affinities.clone();
 		setAffinity();
 		setRest();
@@ -49,7 +51,7 @@ public class Flora {
 	}
 	public void setRest() {
 		double mod = SimMap.rand.nextDouble();
-		size = 1.0-mod+0.1;
+		size = 1.2-mod;
 		growthRate = regionAffinity+mod;
 	}
 	public void setRest(double size) {
@@ -57,10 +59,10 @@ public class Flora {
 		growthRate = regionAffinity+(1.0-size);
 	}
 	private void setMaxCover() {
-		maxCover = (int)(regionAffinity*100*myRegion.getSize()/size)+1000;
+		maxCover = (int)(regionAffinity*200*myRegion.getSize()/size)+1000;
 	}
 	private void setCover() {
-		cover = 10*SimMap.rand.nextInt(10)+100;
+		cover = 100*SimMap.rand.nextInt(10)+100;
 		foliage = cover;
 	}
 	private void setAffinity () {
@@ -68,6 +70,12 @@ public class Flora {
 		subAffinity(myRegion.regionWeather.getTemperatureInit(), affinities[1])+
 		subAffinity(myRegion.regionWeather.getPrecipitationInit(), affinities[2])+
 		subAffinity(myRegion.regionWeather.getWindInit(), affinities[3]);
+	}
+	public void changeCover(int cover) {
+		this.cover += cover;
+	}
+	public void changeFoliage(int foliage) {
+		this.foliage+=foliage;
 	}
 	private double subAffinity(double regionVal, int affinity) {
 		if (affinity==-1) return 1-regionVal;
@@ -79,40 +87,47 @@ public class Flora {
 		spreadFlora(crowding);
 	}
 	private void growFoliage() {
-		int change;
-		double growth = (subAffinity(myRegion.regionWeather.getTemperature(), affinities[1])+
-		subAffinity(myRegion.regionWeather.getPrecipitation(), affinities[2])+
-		subAffinity(myRegion.regionWeather.getWindInit(), affinities[3]));
-		// System.out.println(growth);
-		if (foliage<0) 
+		double change;
+		double weather = subAffinity(myRegion.regionWeather.getTemperature(), affinities[1]);
+		change=(foliage*weather)/10.0;
+			// System.out.println(change);
+		if (foliage<0) {
 			foliage=0;
+		} else if (weather<0) {
+			foliage += change*5;
+		}
+
 		if (food>10*cover) 
 			food=10*cover;
-		food+=(foliage*growth)/10;
+		food += change;
 
-		if (food>0) {
-			change = (foliage<cover*4) ? cover/5 : 0;
+		if (food>foliage&&weather>0) {
+			change = (foliage<cover*4) ? cover/10 : 0;
 			foliage+=change; food-=change;
-		} else {
-			change = foliage/10+10;
-			foliage-=change; food+=change;
+		} else if (food<0&&foliage>0) {
+			change = food*2;
+			foliage+=change; food=Math.abs(food);
 		}
 	}
 	private void spreadFlora(int crowding) {
 		int total = Math.max((6-crowding),1)*maxCover;
 		double change;
-		if (cover<total&&food>0) {
+		// food-=cover/10;
+		if (cover<total&&food>cover) {
 			change=(cover/crowding)*(growthRate/10.0);
-			food-=change; cover+=change;
+			food-=change*2; cover+=change;
 		} else if(food<=0&&foliage<=0) {
 			change = -food*2+100;
-			cover-=change;
-			foliage+=change; food+=change;
+			cover-=change; food+=change;
 		}
 	}
-	public void changeFoliage(int foliage) {
-		this.foliage-=foliage;
+	public void multiply (List<Integer> adjacencyReg) {
+        if(cover>2000&&SimMap.rand.nextInt(10)>8) {
+            Region region = SimMap.regionList.get(Namer.getRandomItem(adjacencyReg));
+            region.regionFlora.putIfAbsent(name, new Flora(this, region));
+        }
 	}
+
     @Override
     public String toString() {
     	return name+

@@ -23,13 +23,15 @@ class keyEvent implements KeyListener {
 		switch(k.getKeyCode()) {
 			case 84 : { map.mapBioCount(); System.out.println("animals: "+SimMap.totalFauna+" plants: "+SimMap.totalFlora); } //t key
 			break;
-			case 85 : SimMap.counter+=0.1 ; map.mapUpdate(); // u key
+			case 85 : map.mapUpdate(); // u key
+			break;
+			case 73 : map.mapUpdate(100); //i key
 			break;
 			case 68 : { map.mapDisplay(); System.out.println(SimMap.counter); }// d key 
 			break;
-			case 88 : map.mapIncreaseSpecies(1);
+			case 88 : map.mapIncreaseSpecies(1); //z key
 			break;
-			case 90: map.mapIncreaseSpecies(2);
+			case 90: map.mapIncreaseSpecies(2); //x key
 			break;
 			case 27 : System.exit(0); //esc key
 			break;
