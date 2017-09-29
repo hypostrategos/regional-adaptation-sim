@@ -77,15 +77,18 @@ public class Region {
     public void setBio(int flag) {
         String name;
         for (int i = 0; i<SimMap.rand.nextInt(4)+1; i++) {
-            name = Namer.genName();
             switch(flag) {
-                case 0 : regionFlora.put(name, new Flora(this, name));
+                case 0 : name = Namer.genName(0); regionFlora.put(name, new Flora(this, name));
                 break;
                 case 1 : 
-                if (i%3==1) 
+                if (i%3==1) {
+                    name = Namer.genName(1);
                     regionFauna.put(name, new Carnivore(this, name));
-                else
+                }
+                else {
+                    name = Namer.genName(2);
                     regionFauna.put(name, new Herbivore(this, name));
+                }
                 break;
             }
         }
@@ -99,7 +102,7 @@ public class Region {
         .filter(fauna -> (regionFauna.size()==1&&fauna instanceof Carnivore)
             ||(regionFlora.size()==0&&fauna instanceof Herbivore))
         .forEach(fauna -> {
-            fauna.setRegion( SimMap.regionList.get(Namer.getRandomItem(adjacencyReg)) )
+            fauna.setRegion( Namer.getRandomItem(adjacencyReg) )
             .regionFauna.putIfAbsent(fauna.getName(), fauna); 
             badFauna.add(fauna);
         } );

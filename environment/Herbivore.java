@@ -16,14 +16,14 @@ public class Herbivore extends Fauna {
 		double consumption;
 		consumption = population*SimMap.rand.nextDouble()*(size/(10*flora.getSize()));
 		flora.changeFoliage(-(int)consumption);
-		// System.out.println(-(int)consumption);
 		food+=consumption*(5*flora.getSize());
 	}
     @Override
 	public void multiply (List<Integer> adjacencyReg) {
         if(population>2000&&SimMap.rand.nextInt(10)>8) {
-            Region region = SimMap.regionList.get(Namer.getRandomItem(adjacencyReg));
+            Region region = Namer.getEmptyItem(adjacencyReg, 1);
             region.regionFauna.putIfAbsent(name, new Herbivore(this, region));
+            // System.out.println(myRegion+"->"+region);
         }
 	}
     @Override

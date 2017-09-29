@@ -30,7 +30,7 @@ public class Carnivore extends Fauna {
     @Override
 	public void multiply (List<Integer> adjacencyReg) {
         if(population>2000&&SimMap.rand.nextInt(10)>8) {
-            Region region = SimMap.regionList.get(Namer.getRandomItem(adjacencyReg));
+            Region region = Namer.getRandomItem(adjacencyReg);
             region.regionFauna.putIfAbsent(name, new Carnivore(this, region));
         }
 	}

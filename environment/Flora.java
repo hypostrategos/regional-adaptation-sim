@@ -123,7 +123,7 @@ public class Flora {
 	}
 	public void multiply (List<Integer> adjacencyReg) {
         if(cover>2000&&SimMap.rand.nextInt(10)>8) {
-            Region region = SimMap.regionList.get(Namer.getRandomItem(adjacencyReg));
+            Region region = Namer.getEmptyItem(adjacencyReg, 0);
             region.regionFlora.putIfAbsent(name, new Flora(this, region));
         }
 	}
