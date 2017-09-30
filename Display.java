@@ -20,7 +20,7 @@ public class Display {
 	    jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		setUpDisplay();
-	    jf.add(new Circles());
+	    jf.add(new ShapePanel());
 	    jf.addKeyListener(new keyEvent());
 	    jf.setVisible(true);
 	}
@@ -30,7 +30,7 @@ public class Display {
 	}
 }
 
-class Circles extends JPanel {
+class ShapePanel extends JPanel {
     private static ArrayList<Circle> circles = new ArrayList<Circle>();
 
     public static void add(Circle circle) {
@@ -55,25 +55,37 @@ class Circles extends JPanel {
             	circle.getCenterX(), circle.getCenterY(), 
             	circles.get(target).getCenterX(), circles.get(target).getCenterY())
             );
-
             g2.draw(circle2D);
         }
+    }
+    public ShapePanel() {
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent me) {
+				super.mouseClicked(me);
+				for (Circle s : circles) {
+					if ( s.contains( me.getX(), me.getY() ) ) {
+                        System.out.println(s.getRegion());
+  					}
+				}
+			}
+		} );
     }
 }
 
 class Circle {
 	private int id, centerX, centerY, radius;
+	private Region myRegion;
     private List<Integer> adjacencies;
-	// private Region myRegion;
 
-	Circle( Region region ) {
+	public Circle( Region region ) {
+		myRegion = region;
 		id = region.getRegionId();
-		// myRegion = region;
 	    radius = region.getSize();
 	    centerX = 50+(int)((id%SimMap.mapWidth)*(Display.xWidth/SimMap.mapWidth));
 	    centerY = 50+(int)((id/SimMap.mapWidth)*(Display.yWidth/(SimMap.numOfRegions/SimMap.mapWidth)));
 	    adjacencies = region.getAdjacencyReg();
-	    Circles.add(this);
+	    ShapePanel.add(this);
 	}
 	public int getCenterX() {
 		return centerX;
@@ -87,17 +99,26 @@ class Circle {
 	public int getId() {
 		return id;
 	}
+	public Region getRegion() {
+		return myRegion;
+	}
 	public List<Integer> getAdjacencies() {
 		return adjacencies;
 	}
+	public boolean contains(double x, double y) {
+	   double dx = x - centerX;
+	   double dy = y - centerY;
+	   return dx * dx + dy * dy <= radius * radius;
+   	}
 }
 
 class keyEvent implements KeyListener {
 	SimMap map;
+
 	public keyEvent () {
 		map = SimMap.getInstance();
 	}
-
+	
 	public void keyPressed(KeyEvent k) {
 		// System.out.println(k.getKeyCode());
 		switch(k.getKeyCode()) {
