@@ -179,11 +179,11 @@ public class Region {
     @Override
     public String toString() {
         return "Region: "+regionId+
-        // " || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+
+        " || Adj: "+adjacencyReg+" || Size: "+regionSize+" || Dist: "+adjacencyDist +" || Dir: "+adjacencyDir+
         // " "+regionElevationInit+" "+regionElevation+
         // " "+regionWeather.getTemperature()+" "+regionWeather.getPrecipitation()+" "+regionWeather.getWind()+
         // " "+regionFlora.values()+"\n"+    
-        " "+regionFauna.values()+
+        // " "+regionFauna.values()+
         "\n";
     }
 }

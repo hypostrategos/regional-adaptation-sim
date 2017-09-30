@@ -6,6 +6,6 @@ public class MapGen {
     	Namer.populateNames();
         SimMap map = SimMap.getInstance();
 
-    	Graphics.start();
+    	Display.start();
 	}
 }
