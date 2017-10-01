@@ -7,18 +7,23 @@ function clean  {
 		rm *.class
 	fi
 }
-
+function make {
+	clean
+	javac *.java
+}
 case $@ in
 	"")
 	if [ -e "MapGen.class" ] 
-	then java MapGen
+		then java MapGen
+	else
+		make
+		java MapGen
 	fi 
 	;;
 	"c")
 	clean
 	;;
 	"m")
-	clean
-	javac *.java;
+	make
 	;;
 esac
