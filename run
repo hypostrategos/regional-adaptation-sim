@@ -1,2 +1,24 @@
-#!/bin/bash 
-java MapGen
+#!/bin/bash
+
+function clean  {
+	if [ -e "MapGen.class" ]
+		then
+		rm environment/*.class
+		rm *.class
+	fi
+}
+
+case $@ in
+	"")
+	if [ -e "MapGen.class" ] 
+	then java MapGen
+	fi 
+	;;
+	"c")
+	clean
+	;;
+	"m")
+	clean
+	javac *.java;
+	;;
+esac

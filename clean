@@ -1,3 +1,0 @@
-#!/bin/bash 
-rm environment/*.class
-rm *.class
